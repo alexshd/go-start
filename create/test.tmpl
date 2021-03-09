@@ -1,0 +1,22 @@
+package {{ .Name | ToLower }}_test
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+)
+
+type fixture{{ .Name | ToTitle }} struct {
+	suite.Suite
+}
+
+func TestSute(t *testing.T) {
+	suite.Run(t, new(fixture{{ .Name | ToTitle  }}))
+}
+
+func (f *fixture{{ .Name | ToTitle  }}) SetupTest() {
+}
+
+func (f *fixture{{ .Name }}) Test{{ .Name }}() {
+	f.Equal(1, 2, "test to fail")
+}
