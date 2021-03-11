@@ -6,17 +6,17 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type fixture{{ .Name | ToTitle }} struct {
+type fixture{{ .Name | Title }} struct {
 	suite.Suite
 }
 
 func TestSute(t *testing.T) {
-	suite.Run(t, new(fixture{{ .Name | ToTitle  }}))
+	suite.Run(t, new(fixture{{ .Name | Title  }}))
 }
 
-func (f *fixture{{ .Name | ToTitle  }}) SetupTest() {
+func (f *fixture{{ .Name | Title  }}) SetupTest() {
 }
 
-func (f *fixture{{ .Name }}) Test{{ .Name }}() {
+func (f *fixture{{ .Name | Title }}) Test{{ .Name | Title }}() {
 	f.Equal(1, 2, "test to fail")
 }

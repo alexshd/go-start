@@ -21,7 +21,15 @@ type TempData struct {
 	Name    string
 }
 
-func TempPopulate(out io.Writer, tp string, data *TempData) error {
+func TempPopulate(out io.Writer, tp string, name string) error {
+	data := &TempData{
+		Name: name,
+		FuncMap: template.FuncMap{
+			"ToLower": strings.ToLower,
+			"Title":   strings.Title,
+		},
+	}
+
 	tmpl := template.Must(template.New("testfile").Funcs(data.FuncMap).Parse(tp))
 	err := tmpl.Execute(out, data)
 

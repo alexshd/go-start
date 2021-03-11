@@ -3,9 +3,7 @@ package create_test
 import (
 	"bytes"
 	"fmt"
-	"strings"
 	"testing"
-	"text/template"
 
 	"github.com/shdlabs/go-start/create"
 	"github.com/stretchr/testify/suite"
@@ -13,7 +11,6 @@ import (
 
 type fixtureTMPFile struct {
 	suite.Suite
-	data    *create.TempData
 	name    string
 	tp      string
 	wantOut string
@@ -25,21 +22,15 @@ func TestSute(t *testing.T) {
 }
 
 func (f *fixtureTMPFile) SetupTest() {
-	f.name = "test1"
+	f.name = "Cool thing"
 	f.tp = "{{ .Name }} - {{ .Name | ToLower }} - {{ .Name | Title -}}"
-	f.data = &create.TempData{
-		Name: "Cool thing", FuncMap: template.FuncMap{
-			"ToLower": strings.ToLower,
-			"Title":   strings.Title,
-		},
-	}
 
 	f.wantOut = "Cool thing - cool thing - Cool Thing"
 }
 
 func (f *fixtureTMPFile) TestTempPopulate() {
 	out := &bytes.Buffer{}
-	err := create.TempPopulate(out, f.tp, f.data)
+	err := create.TempPopulate(out, f.tp, f.name)
 	f.NoError(err)
 	f.Equal(f.wantOut, out.String())
 }
