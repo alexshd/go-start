@@ -1,40 +1,22 @@
 package main
 
 import (
-	"io"
-	"os"
-	"strings"
-	"text/template"
+	"net/http"
 
-	"github.com/shdlabs/go-start/create"
+	"github.com/pkg/errors"
+	"github.com/shdlabs/go-start/shdio/web"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	data := &create.TempData{
-		Name: "continue",
-		FuncMap: template.FuncMap{
-			"ToLower": strings.ToLower,
-			"ToTitle": strings.ToTitle,
-		},
-	}
-
-	create.TempPopulate(os.Stdout, create.TempTestFile, data)
-
-	f, err := os.Create(".gitignore")
-	if err != nil {
+	if err := realMain(); err != nil {
 		logrus.Fatal(err)
 	}
+}
 
-	defer f.Close()
+func realMain() error {
+	srv := web.NewServer(":8000")
+	logrus.Info("Starting Server on:", srv.Port)
 
-	res, err := create.GitIgnoreGenerator("go", "vscode", "macos")
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	defer res.Body.Close()
-	if _, err := io.Copy(f, res.Body); err != nil {
-		logrus.Fatal(err)
-	}
+	return errors.Wrap(http.ListenAndServe(srv.Port, srv), "failed to start")
 }
