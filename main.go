@@ -20,8 +20,6 @@ func main() {
 }
 
 // handleName
-// 1. short name => error
-// 2. long name 'github.com/shdlabs/newpackage => dir `newpackage` , mod init `full`
 // 3. prefix go `go-name`, `goname` => folder as given, package without prefix.
 func handleName(name string) error {
 	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)

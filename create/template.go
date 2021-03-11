@@ -18,21 +18,21 @@ import (
 //nolint:gochecknoglobals
 var TempTestFile string // embed works this way
 
-type TempData struct {
-	FuncMap template.FuncMap
+type tempData struct {
+	funcMap template.FuncMap
 	Name    string
 }
 
 func TempPopulate(out io.Writer, tp string, name string) error {
-	data := &TempData{
+	data := &tempData{
 		Name: name,
-		FuncMap: template.FuncMap{
+		funcMap: template.FuncMap{
 			"ToLower": strings.ToLower,
 			"Title":   strings.Title,
 		},
 	}
 
-	tmpl := template.Must(template.New("testfile").Funcs(data.FuncMap).Parse(tp))
+	tmpl := template.Must(template.New("testfile").Funcs(data.funcMap).Parse(tp))
 	err := tmpl.Execute(out, data)
 
 	return errors.Wrap(err, "template execution")
