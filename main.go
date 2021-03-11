@@ -1,110 +1,27 @@
+/*
+Copyright © 2021 Alex SHD
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 package main
 
 import (
-	"flag"
-	"fmt"
-	"os"
-	"os/exec"
-	"regexp"
-	"strings"
-
-	"github.com/pkg/errors"
-	"github.com/shdlabs/go-start/create"
+	"github.com/shdlabs/go-start/start"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	if err := realMain(); err != nil {
-		logrus.Fatalf("%v", err)
+	if err := start.NewRootCmd().Execute(); err != nil {
+		logrus.Fatal(err)
 	}
-}
-
-// handleName
-// 3. prefix go `go-name`, `goname` => folder as given, package without prefix.
-func handleName(name string) error {
-	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)
-	if !r.MatchString(name) {
-		return NameError
-	}
-
-	return nil
-}
-
-//go:generate stringer -type=StartErrors
-// StartErrors error type.
-type StartErrors int
-
-const (
-	NameError StartErrors = 11
-)
-
-func (e StartErrors) Error() string {
-	return e.String()
-}
-
-func realMain() error {
-	packageName := ""
-
-	flag.StringVar(&packageName, "name", "", "-name <name>; name should match |^[a-z0-9]{2,}$|")
-	flag.Parse()
-
-	fullName := packageName
-
-	if strings.ContainsRune(packageName, '/') {
-		s := strings.Split(packageName, "/")
-		packageName = s[len(s)-1]
-	}
-
-	if err := handleName(packageName); err != nil {
-		flag.Usage()
-
-		return errors.Wrap(err, "regex roles")
-	}
-
-	if err := os.Mkdir(packageName, 0754); err != nil {
-		return errors.Wrap(err, "failed to create directory")
-	}
-
-	_ = os.Chdir(packageName) // just created the dir
-
-	done := make(chan error)
-
-	go func() { done <- create.MkGitingnore("go", "vscode", "macos") }()
-
-	f, _ := os.Create(fmt.Sprintf("%s_test.go", packageName))
-
-	if err := create.TempPopulate(f, create.TempTestFile, packageName); err != nil {
-		return errors.Wrap(err, "failed to create test file")
-	}
-
-	err := <-done
-	if err != nil {
-		return errors.Wrap(err, "failed to create gitignore file")
-	}
-
-	commands := []string{
-		fmt.Sprintf("go mod init %s", fullName),
-		"git init",
-		`git add .`,
-		"go mod tidy",
-	}
-
-	for _, cmd := range commands {
-		out, err := cmdFactory(cmd)
-		if err != nil {
-			return errors.Wrap(err, cmd)
-		}
-
-		if len(out) > 0 {
-			logrus.Printf("%s\n", out)
-		}
-	}
-
-	return nil
-}
-
-func cmdFactory(exeCommand string) ([]byte, error) {
-	args := strings.Split(exeCommand, " ")
-
-	return exec.Command(args[0], args[1:]...).Output()
 }
