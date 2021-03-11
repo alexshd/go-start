@@ -5,6 +5,8 @@ import (
 	_ "embed" // the way embed works with strings
 	"fmt"
 	"io"
+	"net/http"
+	"os"
 	"strings"
 	"text/template"
 
@@ -36,12 +38,24 @@ func TempPopulate(out io.Writer, tp string, name string) error {
 	return errors.Wrap(err, "template execution")
 }
 
-// ToptalURIBulder adds list of ignored subjects to api uri.
-//
-// For full list of available subjects run:
-//  $ curl https://www.toptal.com/developers/gitignore/api/list
-func ToptalURIBulder(toIgnore ...string) string {
-	return fmt.Sprintf(
+func MkGitingnore(toIgnore ...string) error {
+	url := fmt.Sprintf(
 		"https://www.toptal.com/developers/gitignore/api/%s", strings.Join(toIgnore, ","),
 	)
+
+	res, err := http.Get(url)
+	if err != nil {
+		return errors.Wrap(err, "request  failed")
+	}
+
+	defer res.Body.Close()
+
+	f, _ := os.Create(".gitignore")
+	defer f.Close()
+
+	if _, err := io.Copy(f, res.Body); err != nil {
+		return errors.Wrap(err, "failed writing to file")
+	}
+
+	return nil
 }

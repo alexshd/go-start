@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/go-chi/chi v1.5.4
+	github.com/kr/pretty v0.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.20.0
 	github.com/sirupsen/logrus v1.8.1

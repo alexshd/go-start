@@ -2,7 +2,6 @@ package create_test
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/shdlabs/go-start/create"
@@ -33,9 +32,4 @@ func (f *fixtureTMPFile) TestTempPopulate() {
 	err := create.TempPopulate(out, f.tp, f.name)
 	f.NoError(err)
 	f.Equal(f.wantOut, out.String())
-}
-
-func ExampleToptalURIBulder() {
-	fmt.Println(create.ToptalURIBulder("go", "vscode", "macos"))
-	// Output: https://www.toptal.com/developers/gitignore/api/go,vscode,macos
 }
