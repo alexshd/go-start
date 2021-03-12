@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/shdlabs/go-start/project"
+	"log"
 
-	"github.com/sirupsen/logrus"
+	"github.com/shdlabs/go-start/project"
 )
 
 func main() {
 	if err := project.NewRootCmd().Execute(); err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 }
