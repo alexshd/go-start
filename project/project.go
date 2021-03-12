@@ -26,11 +26,29 @@ func buildProject() *cobra.Command {
 		Short: "manage projects",
 		Long:  longHelp,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := handleName(args[0]); err != nil {
-				return err
-			}
-
 			return app.Config.Load(cmd)
+		},
+
+		Args: cobra.ExactArgs(1),
+	}
+
+	projectCommand.Flags().StringVar(&app.Config.Dest, "dest", ".", "where to create the project")
+
+	projectCommand.AddCommand(buildCreate())
+	projectCommand.AddCommand(buildShow())
+
+	return projectCommand
+}
+
+func buildCreate() *cobra.Command {
+	defer config.Measure(time.Now(), "buildCreate")
+
+	createCommand := &cobra.Command{
+		Use:   "create",
+		Short: "create project",
+		Long:  longHelp,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return handleName(args[0])
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -39,11 +57,7 @@ func buildProject() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 	}
 
-	projectCommand.Flags().StringVar(&app.Config.Dest, "dest", ".", "where to create the project")
-
-	projectCommand.AddCommand(buildShow())
-
-	return projectCommand
+	return createCommand
 }
 
 func buildShow() *cobra.Command {

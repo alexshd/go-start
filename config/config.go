@@ -3,6 +3,8 @@ package config
 import (
 	"time"
 
+	"github.com/mitchellh/go-homedir"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -25,16 +27,25 @@ func New() *App {
 
 func (s *Settings) Load(cmd *cobra.Command) error {
 	v := viper.New()
-	v.AddConfigPath(".")
 
-	if err := v.ReadInConfig(); err != nil {
-		return err
+	v.SetConfigName(".go-start")
+
+	configDir, err := homedir.Dir()
+	if err != nil {
+		return errors.Wrap(err, "failed to get home dir")
 	}
 
-	v.BindPFlags(cmd.Flags())
-	err := v.Unmarshal(s)
+	v.AddConfigPath(configDir)
 
-	return err
+	if err = v.ReadInConfig(); err != nil {
+		return errors.Wrap(err, "failed to read config")
+	}
+
+	if err := v.BindPFlags(cmd.Flags()); err != nil {
+		return errors.Wrap(err, "failed binding flags")
+	}
+
+	return errors.Wrap(v.Unmarshal(s), "failed unmarshaler")
 }
 
 func Measure(tn time.Time, name string) {
