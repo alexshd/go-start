@@ -3,8 +3,10 @@ package config
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/mitchellh/go-homedir"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -34,4 +36,8 @@ func (cfg *Settings) InitConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func Measure(tn time.Time, name string) {
+	logrus.Infof("%s took: %v", name, time.Since(tn))
 }

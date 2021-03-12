@@ -2,39 +2,62 @@
 package project
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
+	"github.com/shdlabs/go-start/config"
 	"github.com/shdlabs/go-start/create"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 func BuildProject() *cobra.Command {
+	defer config.Measure(time.Now(), "BuildProject")
 	projectCommand := &cobra.Command{
 		Use:   "project",
 		Short: "manage projects",
 		Long:  longHelp,
 
 		Run: func(cmd *cobra.Command, args []string) {
-			makePackage(cmd.Flag("name").Value.String())
+			cobra.CheckErr(makePackage(cmd.Flag("name").Value.String()))
 		},
 	}
 
 	projectCommand.Flags().StringP("name", "n", "", "project name")
 	// projectCommand.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
+	projectCommand.AddCommand(buildShow())
+
 	return projectCommand
+}
+
+func buildShow() *cobra.Command {
+	defer config.Measure(time.Now(), "buildShow")
+	showCommand := &cobra.Command{
+		Use:   "show",
+		Short: "show info",
+
+		Run: func(cmd *cobra.Command, args []string) {
+			logrus.Println("show was called")
+		},
+	}
+
+	// showCommand.Flags().StringP("name", "n", "", "project name")
+	// projectCommand.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	return showCommand
 }
 
 // handleName
 // 3. prefix go `go-name`, `goname` => folder as given, package without prefix.
 func handleName(name string) error {
+	defer config.Measure(time.Now(), "handleName")
+
 	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)
 	if !r.MatchString(name) {
 		return NameError
@@ -56,6 +79,8 @@ func (e StartErrors) Error() string {
 }
 
 func makePackage(packageName string) error {
+	defer config.Measure(time.Now(), "makePackage")
+
 	fullName := packageName
 
 	if strings.ContainsRune(packageName, '/') {
@@ -64,9 +89,7 @@ func makePackage(packageName string) error {
 	}
 
 	if err := handleName(packageName); err != nil {
-		flag.Usage()
-
-		return errors.Wrap(err, "regex roles")
+		return errors.Wrap(err, "regex rules `^[a-z0-9]{2,}$`")
 	}
 
 	if err := os.Mkdir(packageName, 0754); err != nil {
@@ -112,6 +135,7 @@ func makePackage(packageName string) error {
 }
 
 func cmdFactory(exeCommand string) ([]byte, error) {
+	defer config.Measure(time.Now(), exeCommand)
 	args := strings.Split(exeCommand, " ")
 
 	return exec.Command(args[0], args[1:]...).Output()
