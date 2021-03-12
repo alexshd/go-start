@@ -8,6 +8,8 @@ import (
 )
 
 func NewRootCmd() *cobra.Command {
+	defer config.Measure(time.Now(), "NewRootCmd")
+
 	return Execute()
 }
 

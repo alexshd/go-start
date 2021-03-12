@@ -145,7 +145,7 @@ func makePackage(packageName string) error {
 		}
 
 		if len(out) > 0 {
-			logrus.Printf("%s\n", out)
+			logrus.Printf("%s", out)
 		}
 	}
 
