@@ -7,25 +7,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type App struct {
-	Cmd *cobra.Command
-}
-
 func NewRootCmd() *cobra.Command {
-	a := new(App)
-
-	return a.Execute()
+	return Execute()
 }
 
-func (a *App) Execute() *cobra.Command {
+func Execute() *cobra.Command {
 	defer config.Measure(time.Now(), "Execute")
 
-	a.Cmd = &cobra.Command{
+	rootCommand := &cobra.Command{
 		Use:   "go-start",
 		Short: "start or manage projects or packages",
+		Args:  cobra.ExactArgs(1),
 	}
 
-	a.Cmd.AddCommand(BuildProject())
+	rootCommand.AddCommand(buildProject())
 
-	return a.Cmd
+	return rootCommand
 }

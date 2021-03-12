@@ -16,20 +16,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func BuildProject() *cobra.Command {
+func buildProject() *cobra.Command {
 	defer config.Measure(time.Now(), "BuildProject")
+
+	app := config.New()
+
 	projectCommand := &cobra.Command{
 		Use:   "project",
 		Short: "manage projects",
 		Long:  longHelp,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := handleName(args[0]); err != nil {
+				return err
+			}
 
-		Run: func(cmd *cobra.Command, args []string) {
-			cobra.CheckErr(makePackage(cmd.Flag("name").Value.String()))
+			return app.Config.Load(cmd)
 		},
+
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return makePackage(args[0])
+		},
+		Args: cobra.ExactArgs(1),
 	}
 
-	projectCommand.Flags().StringP("name", "n", "", "project name")
-	// projectCommand.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	projectCommand.Flags().StringVar(&app.Config.Dest, "dest", ".", "where to create the project")
 
 	projectCommand.AddCommand(buildShow())
 
@@ -38,6 +48,7 @@ func BuildProject() *cobra.Command {
 
 func buildShow() *cobra.Command {
 	defer config.Measure(time.Now(), "buildShow")
+
 	showCommand := &cobra.Command{
 		Use:   "show",
 		Short: "show info",
@@ -46,9 +57,6 @@ func buildShow() *cobra.Command {
 			logrus.Println("show was called")
 		},
 	}
-
-	// showCommand.Flags().StringP("name", "n", "", "project name")
-	// projectCommand.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	return showCommand
 }
@@ -86,10 +94,6 @@ func makePackage(packageName string) error {
 	if strings.ContainsRune(packageName, '/') {
 		s := strings.Split(packageName, "/")
 		packageName = s[len(s)-1]
-	}
-
-	if err := handleName(packageName); err != nil {
-		return errors.Wrap(err, "regex rules `^[a-z0-9]{2,}$`")
 	}
 
 	if err := os.Mkdir(packageName, 0754); err != nil {

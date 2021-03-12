@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	logrus.SetLevel(logrus.DebugLevel)
+
 	defer config.Measure(time.Now(), "main")
 
 	if err := project.NewRootCmd().Execute(); err != nil {
