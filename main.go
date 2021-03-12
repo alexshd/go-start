@@ -10,11 +10,13 @@ import (
 )
 
 func main() {
-	logrus.SetLevel(logrus.DebugLevel)
-
 	defer config.Measure(time.Now(), "main")
+
+	logrus.SetLevel(logrus.DebugLevel)
 
 	if err := project.NewRootCmd().Execute(); err != nil {
 		logrus.Fatal(err)
 	}
+
+	logrus.Info("Done")
 }

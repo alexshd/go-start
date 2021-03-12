@@ -3,8 +3,9 @@ module github.com/shdlabs/go-start
 go 1.16
 
 require (
+	github.com/bitfield/script v0.18.0
 	github.com/go-chi/chi v1.5.4
-	github.com/kr/pretty v0.2.1 // indirect
+	github.com/kr/pretty v0.2.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1

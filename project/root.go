@@ -23,6 +23,7 @@ func Execute() *cobra.Command {
 	}
 
 	rootCommand.AddCommand(buildProject())
+	rootCommand.AddCommand(buildPackage())
 
 	return rootCommand
 }

@@ -4,15 +4,14 @@ package project
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"regexp"
 	"strings"
 	"time"
 
+	"github.com/bitfield/script"
 	"github.com/pkg/errors"
 	"github.com/shdlabs/go-start/config"
 	"github.com/shdlabs/go-start/create"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +23,7 @@ func buildProject() *cobra.Command {
 	projectCommand := &cobra.Command{
 		Use:   "project",
 		Short: "manage projects",
-		Long:  longHelp,
+
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return app.Config.Load(cmd)
 		},
@@ -67,8 +66,8 @@ func buildShow() *cobra.Command {
 		Use:   "show",
 		Short: "show info",
 
-		Run: func(cmd *cobra.Command, args []string) {
-			logrus.Println("show was called")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return errors.New("make work")
 		},
 	}
 
@@ -114,7 +113,7 @@ func makePackage(packageName string) error {
 		return errors.Wrap(err, "failed to create directory")
 	}
 
-	_ = os.Chdir(packageName) // just created the dir
+	_ = os.Chdir(packageName)
 
 	done := make(chan error)
 
@@ -136,27 +135,17 @@ func makePackage(packageName string) error {
 		"git init",
 		"go mod tidy",
 		`git add .`,
+		`git commit -m'first init'`,
 	}
 
 	for _, cmd := range commands {
-		out, err := cmdFactory(cmd)
+		_, err := script.Exec(cmd).Stdout()
 		if err != nil {
 			return errors.Wrapf(err, "%q", cmd)
-		}
-
-		if len(out) > 0 {
-			logrus.Printf("%s", out)
 		}
 	}
 
 	return nil
-}
-
-func cmdFactory(exeCommand string) ([]byte, error) {
-	defer config.Measure(time.Now(), exeCommand)
-	args := strings.Split(exeCommand, " ")
-
-	return exec.Command(args[0], args[1:]...).Output()
 }
 
 const longHelp = `
