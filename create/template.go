@@ -9,10 +9,8 @@ import (
 	"os"
 	"strings"
 	"text/template"
-	"time"
 
 	"github.com/pkg/errors"
-	"github.com/shdlabs/go-start/config"
 )
 
 //go:embed test.tmpl
@@ -26,8 +24,6 @@ type tempData struct {
 }
 
 func TempPopulate(out io.Writer, tp string, name string) error {
-	defer config.Measure(time.Now(), "TempPopulate")
-
 	data := &tempData{
 		Name: name,
 		funcMap: template.FuncMap{
@@ -43,8 +39,6 @@ func TempPopulate(out io.Writer, tp string, name string) error {
 }
 
 func MkGitingnore(toIgnore ...string) error {
-	defer config.Measure(time.Now(), "MkGitIgnore")
-
 	url := fmt.Sprintf(
 		"https://www.toptal.com/developers/gitignore/api/%s", strings.Join(toIgnore, ","),
 	)
