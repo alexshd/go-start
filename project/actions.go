@@ -11,12 +11,10 @@ import (
 	"github.com/shdlabs/go-start/create"
 )
 
-// handleName
-// 3. prefix go `go-name`, `goname` => folder as given, package without prefix.
 func handleName(name string) error {
 	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)
 	if !r.MatchString(name) {
-		return NameError
+		return nameError
 	}
 
 	return nil
@@ -77,14 +75,14 @@ func runbash(name string) error {
 	return nil
 }
 
-//go:generate stringer -type=StartErrors
+//go:generate stringer -type=nameErrors
 // StartErrors error type.
-type StartErrors int
+type nameErrors int
 
 const (
-	NameError StartErrors = 11
+	nameError nameErrors = 11
 )
 
-func (e StartErrors) Error() string {
+func (e nameErrors) Error() string {
 	return e.String()
 }

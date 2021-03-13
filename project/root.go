@@ -51,15 +51,13 @@ const longHelp = `
 Creates new Golang
     Project:
 	Name restriction: same case, at least 2 symbols, no special symbols.
-	Accepts long 'github.com/example/newproj' and short 'newproj'.
 	Creates:
 		1. new directory ( 'newproj' in both cases )
 		2. go mod init (if long name provided, with long otherwise short)
-		3. creates '.gitignore' from api (go, vscode, macos)
-		4. creates first test file from template.
-		5. inits git repo
-		6. git add .
-		7. git commit -m 'first init'
+		3. creates first test file from template.
+		4. inits git repo
+		5. git add .
+		6. git commit -m 'first init'
 
     Package:
 	Same name restrictions (only short name).
