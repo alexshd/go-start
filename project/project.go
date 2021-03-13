@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 
 	"github.com/bitfield/script"
 	"github.com/pkg/errors"
@@ -23,49 +22,45 @@ func handleName(name string) error {
 	return nil
 }
 
-//go:generate stringer -type=StartErrors
-// StartErrors error type.
-type StartErrors int
+type action func(string) error
 
-const (
-	NameError StartErrors = 11
-)
+func execute(name string, act ...action) error {
+	var err error
 
-func (e StartErrors) Error() string {
-	return e.String()
+	for _, f := range act {
+		if err != nil {
+			break
+		}
+
+		err = f(name)
+	}
+
+	return errors.Wrap(err, "execute error")
 }
 
-func makeProject(packageName string) error {
-	fullName := packageName
+func mkdir(name string) error {
+	return errors.Wrap(
+		os.Mkdir(name, 0754),
+		"failed to create directory",
+	)
+}
 
-	if strings.ContainsRune(packageName, '/') {
-		s := strings.Split(packageName, "/")
-		packageName = s[len(s)-1]
-	}
+func chdir(name string) error {
+	return os.Chdir(name)
+}
 
-	if err := os.Mkdir(packageName, 0754); err != nil {
-		return errors.Wrap(err, "failed to create directory")
-	}
+func mktest(name string) error {
+	f, _ := os.Create(fmt.Sprintf("%s_test.go", name))
 
-	_ = os.Chdir(packageName)
+	return errors.Wrap(
+		create.TempPopulate(f, create.TempTestFile, name),
+		"failed to create test file",
+	)
+}
 
-	done := make(chan error)
-
-	go func() { done <- create.MkGitingnore("go", "vscode", "macos") }()
-
-	f, _ := os.Create(fmt.Sprintf("%s_test.go", packageName))
-
-	if err := create.TempPopulate(f, create.TempTestFile, packageName); err != nil {
-		return errors.Wrap(err, "failed to create test file")
-	}
-
-	err := <-done
-	if err != nil {
-		return errors.Wrap(err, "failed to create gitignore file")
-	}
-
+func runbash(name string) error {
 	commands := []string{
-		fmt.Sprintf("go mod init %s", fullName),
+		fmt.Sprintf("go mod init %s", name),
 		"git init",
 		"go mod tidy",
 		`git add .`,
@@ -82,13 +77,14 @@ func makeProject(packageName string) error {
 	return nil
 }
 
-func makePackage(name string) error {
-	if err := os.Mkdir(name, 0754); err != nil {
-		return errors.Wrap(err, "failed to create directory")
-	}
+//go:generate stringer -type=StartErrors
+// StartErrors error type.
+type StartErrors int
 
-	_ = os.Chdir(name)
-	f, _ := os.Create(fmt.Sprintf("%s_test.go", name))
+const (
+	NameError StartErrors = 11
+)
 
-	return errors.Wrap(create.TempPopulate(f, create.TempTestFile, name), "failed to create test file")
+func (e StartErrors) Error() string {
+	return e.String()
 }

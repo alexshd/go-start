@@ -34,16 +34,14 @@ func createSub() *cobra.Command {
 	create.Short = "create <name>"
 	create.Aliases = []string{"make", "new"}
 	create.Args = cobra.ExactArgs(1)
-	create.PreRunE = func(cmd *cobra.Command, args []string) error {
-		return handleName(args[0])
-	}
 
 	create.RunE = func(cmd *cobra.Command, args []string) error {
+		act := []action{handleName, mkdir, chdir, mktest}
 		if cmd.Parent().Name() == "project" {
-			return makeProject(args[0])
+			act = append(act, runbash)
 		}
 
-		return makePackage(args[0])
+		return execute(args[0], act...)
 	}
 
 	return create

@@ -1,5 +1,11 @@
 package config
 
+import (
+	"time"
+
+	"github.com/sirupsen/logrus"
+)
+
 // import (
 // 	"time"
 
@@ -48,6 +54,6 @@ package config
 // 	return errors.Wrap(v.Unmarshal(s), "failed unmarshaler")
 // }
 
-// func Measure(tn time.Time, name string) {
-// 	logrus.Debugf("%s took: %v", name, time.Since(tn))
-// }
+func Measure(tn time.Time, name string) {
+	logrus.Infof("%s took: %v", name, time.Since(tn))
+}
