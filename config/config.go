@@ -2,9 +2,8 @@
 package config
 
 import (
+	"log"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 // import (
@@ -56,5 +55,5 @@ import (
 // }
 
 func Measure(tn time.Time, name string) {
-	logrus.Infof("%s took: %v", name, time.Since(tn))
+	log.Printf("%s took: %v", name, time.Since(tn))
 }

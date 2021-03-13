@@ -11,7 +11,7 @@ import (
 	"github.com/shdlabs/go-start/create"
 )
 
-func handleName(name string) error {
+func verify(name string) error {
 	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)
 	if !r.MatchString(name) {
 		return nameError
