@@ -11,15 +11,6 @@ import (
 	"github.com/shdlabs/go-start/create"
 )
 
-func verify(name string) error {
-	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)
-	if !r.MatchString(name) {
-		return nameError
-	}
-
-	return nil
-}
-
 type action func(string) error
 
 func execute(name string, act ...action) error {
@@ -34,6 +25,15 @@ func execute(name string, act ...action) error {
 	}
 
 	return errors.Wrap(err, "execute error")
+}
+
+func verify(name string) error {
+	r := regexp.MustCompile(`^[a-z0-9]{2,}$`)
+	if !r.MatchString(name) {
+		return nameError
+	}
+
+	return nil
 }
 
 func mkdir(name string) error {
@@ -76,11 +76,10 @@ func runbash(name string) error {
 }
 
 //go:generate stringer -type=nameErrors
-// StartErrors error type.
 type nameErrors int
 
 const (
-	nameError nameErrors = 11
+	nameError nameErrors = iota
 )
 
 func (e nameErrors) Error() string {
