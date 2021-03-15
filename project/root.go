@@ -43,6 +43,7 @@ func createSub() *cobra.Command {
 func createCmd(cmd *cobra.Command, args []string) error {
 	act := []action{verify, mkdir, chdir, mktest}
 	if cmd.Parent().Name() == "project" {
+		act = append(act, mkgomod)
 		act = append(act, runbash)
 	}
 

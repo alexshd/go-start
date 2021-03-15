@@ -56,9 +56,17 @@ func mktest(name string) error {
 	)
 }
 
-func runbash(name string) error {
+func mkgomod(name string) error {
+	f, _ := os.Create("go.mod")
+
+	return errors.Wrap(
+		create.TempPopulate(f, create.TempModFile, name),
+		"failed to create test file",
+	)
+}
+
+func runbash(string) error {
 	commands := []string{
-		fmt.Sprintf("go mod init %s", name),
 		"git init",
 		"go mod tidy",
 		`git add .`,

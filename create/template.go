@@ -18,6 +18,11 @@ import (
 //nolint:gochecknoglobals
 var TempTestFile string // embed works this way
 
+//go:embed gomod.tmpl
+// TempModFile contains the embedded string from file.
+//nolint:gochecknoglobals
+var TempModFile string
+
 type tempData struct {
 	funcMap template.FuncMap
 	Name    string
