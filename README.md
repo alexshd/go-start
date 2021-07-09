@@ -11,11 +11,15 @@
 1. new directory ( 'newproj' in both cases )
 2. go mod init (if long name provided, with long otherwise short)
 3. creates first test file from template.
-4. inits git repo
-5. git add .
-6. git commit -m 'first init'
+4. :
+```bash
+ inits git repo
+ git add .
+ git commit -m 'first init'
+```
 
 ---
+
 ### Package:
 - Same name restrictions (only short name).
 #### Creates:
