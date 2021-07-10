@@ -12,6 +12,7 @@
 2. go mod init (if long name provided, with long otherwise short)
 3. creates first test file from template.
 4. :
+
 ```bash
  inits git repo
  git add .
@@ -28,3 +29,14 @@
 2. test file
 
 - You should be able to run the test that should fail :)
+
+## Installaton
+
+```bash
+go install .
+```
+or for smaller executable
+
+```bash
+go install -ldflags '-w' . # removing debuging info
+```
