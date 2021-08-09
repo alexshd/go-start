@@ -2,7 +2,9 @@
 package create
 
 import (
-	_ "embed" // the way embed works with strings
+
+	// the way embed works with strings.
+	_ "embed"
 	"io"
 	"strings"
 	"text/template"

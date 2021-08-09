@@ -67,8 +67,8 @@ func mkgomod(name string) error {
 
 func runbash(string) error {
 	commands := []string{
-		"git init",
-		"go mod tidy",
+		`git init`,
+		`go mod tidy`,
 		`git add .`,
 		`git commit -m'first init'`,
 	}
