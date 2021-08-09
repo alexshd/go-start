@@ -4,10 +4,14 @@ package project
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
+	"time"
 
 	"github.com/bitfield/script"
+	"github.com/go-git/go-git/v5"
 	"github.com/pkg/errors"
+	"github.com/shdlabs/go-start/config"
 	"github.com/shdlabs/go-start/create"
 )
 
@@ -65,9 +69,18 @@ func mkgomod(name string) error {
 	)
 }
 
+func gitInit(string) error {
+	defer config.Measure(time.Now(), "gitInit")
+
+	_, err := git.PlainInit(filepath.Join(".", git.GitDirName), true)
+
+	return err
+}
+
 func runbash(string) error {
+	defer config.Measure(time.Now(), "runbash")
+
 	commands := []string{
-		`git init`,
 		`go mod tidy`,
 		`git add .`,
 		`git commit -m'first init'`,
