@@ -4,11 +4,11 @@ package project
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"time"
 
-	"github.com/bitfield/script"
 	"github.com/go-git/go-git/v5"
 	"github.com/pkg/errors"
 	"github.com/shdlabs/go-start/config"
@@ -78,8 +78,6 @@ func gitInit(string) error {
 }
 
 func gitAddCommit(string) error {
-	defer config.Measure(time.Now(), "gitAddCommit")
-
 	r, err := git.PlainOpen(".")
 	if err != nil {
 		return err
@@ -97,14 +95,9 @@ func gitAddCommit(string) error {
 }
 
 func runbash(string) error {
-	defer config.Measure(time.Now(), "runbash")
+	cmd := exec.Command("go", "mod", "tidy")
 
-	_, err := script.Exec(`go mod tidy`).Stdout()
-	if err != nil {
-		return errors.Wrapf(err, "%q", "go mod tidy")
-	}
-
-	return nil
+	return cmd.Run()
 }
 
 //go:generate stringer -type=nameErrors
