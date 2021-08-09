@@ -77,20 +77,31 @@ func gitInit(string) error {
 	return err
 }
 
+func gitAddCommit(string) error {
+	defer config.Measure(time.Now(), "gitAddCommit")
+
+	r, err := git.PlainOpen(".")
+	if err != nil {
+		return err
+	}
+
+	w, _ := r.Worktree()
+
+	if err = w.AddGlob("."); err != nil {
+		return err
+	}
+
+	_, err = w.Commit("initial commit", &git.CommitOptions{All: true})
+
+	return err
+}
+
 func runbash(string) error {
 	defer config.Measure(time.Now(), "runbash")
 
-	commands := []string{
-		`go mod tidy`,
-		`git add .`,
-		`git commit -m'first init'`,
-	}
-
-	for _, cmd := range commands {
-		_, err := script.Exec(cmd).Stdout()
-		if err != nil {
-			return errors.Wrapf(err, "%q", cmd)
-		}
+	_, err := script.Exec(`go mod tidy`).Stdout()
+	if err != nil {
+		return errors.Wrapf(err, "%q", "go mod tidy")
 	}
 
 	return nil

@@ -46,6 +46,7 @@ func createCmd(cmd *cobra.Command, args []string) error {
 		act = append(act, mkgomod)
 		act = append(act, gitInit)
 		act = append(act, runbash)
+		act = append(act, gitAddCommit)
 	}
 
 	return execute(args[0], act...)
