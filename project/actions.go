@@ -73,19 +73,15 @@ func gitInit(string) error {
 	return err
 }
 
+type safeError struct {
+	err error
+}
+
 func gitAddCommit(string) error {
-	r, err := git.PlainOpen(".")
-	if err != nil {
-		return err
-	}
-
+	r, _ := git.PlainOpen(".")
 	w, _ := r.Worktree()
-
-	if err = w.AddGlob("."); err != nil {
-		return err
-	}
-
-	_, err = w.Commit("initial commit", &git.CommitOptions{All: true})
+	_ = w.AddGlob(".")
+	_, err := w.Commit("initial commit", &git.CommitOptions{All: true})
 
 	return err
 }
