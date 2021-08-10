@@ -78,10 +78,14 @@ type safeError struct {
 }
 
 func gitAddCommit(string) error {
-	r, _ := git.PlainOpen(".")
+	r, err := git.PlainOpen(".")
+	if err != nil {
+		return err
+	}
+
 	w, _ := r.Worktree()
 	_ = w.AddGlob(".")
-	_, err := w.Commit("initial commit", &git.CommitOptions{All: true})
+	_, err = w.Commit("initial commit", &git.CommitOptions{All: true})
 
 	return err
 }
