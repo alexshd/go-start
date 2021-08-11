@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/shdlabs/go-start/create"
+	"github.com/alexshd/go-start/create"
 	"github.com/stretchr/testify/suite"
 )
 

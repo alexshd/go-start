@@ -1,4 +1,4 @@
-module github.com/shdlabs/go-start
+module github.com/alexshd/go-start
 
 go 1.16
 

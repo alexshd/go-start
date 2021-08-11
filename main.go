@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/shdlabs/go-start/config"
-	"github.com/shdlabs/go-start/project"
+	"github.com/alexshd/go-start/config"
+	"github.com/alexshd/go-start/project"
 )
 
 func main() {
